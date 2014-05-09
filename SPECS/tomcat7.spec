@@ -2,21 +2,19 @@
 #
 # sudo yum -y install rpmdevtools && rpmdev-setuptree
 #
-# wget https://raw.github.com/nmilford/rpm-tomcat7/master/tomcat7.spec -O ~/rpmbuild/SPECS/tomcat7.spec
-# wget https://raw.github.com/nmilford/rpm-tomcat7/master/tomcat7.init -O ~/rpmbuild/SOURCES/tomcat7.init
-# wget https://raw.github.com/nmilford/rpm-tomcat7/master/tomcat7.sysconfig -O ~/rpmbuild/SOURCES/tomcat7.sysconfig
-# wget https://raw.github.com/nmilford/rpm-tomcat7/master/tomcat7.logrotate -O ~/rpmbuild/SOURCES/tomcat7.logrotate
-# wget http://www.motorlogy.com/apache/tomcat/tomcat-7/v7.0.41/bin/apache-tomcat-7.0.41.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-7.0.41.tar.gz
-# rpmbuild -bb ~/rpmbuild/SPECS/tomcat7.spec
+# git clone https://github.com/xflin/skinny-tomcat-rpm.git
+# cd ~/skinny-tomcat-rpm/SOURCES && wget http://www.motorlogy.com/apache/tomcat/tomcat-8/v8.0.5/bin/apache-tomcat-8.0.5.tar.gz
+# ln -s ~/rpmbuild ./skinny-tomcat-rpm
+# rpmbuild -bb ~/rpmbuild/SPECS/tomcat.spec
 
 %define __jar_repack %{nil}
-%define tomcat_home /opt/tomcat7
+%define tomcat_home /opt/tomcat
 %define tomcat_group tomcat
 %define tomcat_user tomcat
 
-Summary:    Apache Servlet/JSP Engine, RI for Servlet 2.4/JSP 2.0 API
-Name:       tomcat7
-Version:    7.0.41
+Summary:    Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies.
+Name:       tomcat
+Version:    8.0.5
 BuildArch:  noarch
 Release:    1
 License:    Apache Software License
@@ -26,14 +24,14 @@ Source0:    apache-tomcat-%{version}.tar.gz
 Source1:    %{name}.init
 Source2:    %{name}.sysconfig
 Source3:    %{name}.logrotate
-Requires:   jdk
+Requires:   jre >= 1.7
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
 Tomcat is the servlet container that is used in the official Reference
 Implementation for the Java Servlet and JavaServer Pages technologies.
 The Java Servlet and JavaServer Pages specifications are developed by
-Sun under the Java Community Process.
+Oracle under the Java Community Process.
 
 Tomcat is developed in an open and participatory environment and
 released under the Apache Software License. Tomcat is intended to be
@@ -41,8 +39,7 @@ a collaboration of the best-of-breed developers from around the world.
 We invite you to participate in this open development project. To
 learn more about getting involved, click here.
 
-This package contains the base tomcat installation that depends on Sun's JDK and not
-on JPP packages.
+This package contains the base tomcat installation that depends on Oracle's Java or openjdk JPP packages.
 
 %prep
 %setup -q -n apache-tomcat-%{version}
@@ -52,6 +49,13 @@ on JPP packages.
 %install
 install -d -m 755 %{buildroot}/%{tomcat_home}/
 cp -R * %{buildroot}/%{tomcat_home}/
+
+# Remove all webapps
+rm -rf %{buildroot}/%{tomcat_home}/webapps/ROOT/*
+rm -rf %{buildroot}/%{tomcat_home}/webapps/docs
+rm -rf %{buildroot}/%{tomcat_home}/webapps/examples
+rm -rf %{buildroot}/%{tomcat_home}/webapps/host-manager
+rm -rf %{buildroot}/%{tomcat_home}/webapps/manager
 
 # Put logging in /var/log and link back.
 rm -rf %{buildroot}/%{tomcat_home}/logs
@@ -111,5 +115,13 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Mon Apr 28 2014 Xiaofeng Lin <xflin>
+* Thu Apr 10 2014 Brian Dwyer <bdwyertech>
+* Sat Feb 15 2014 Michael McGraw-Herdeg <mherdeg@mit.edu>
+- 7.0.50
+* Tue Jan 7 2014 Michael McGraw-Herdeg <mherdeg@mit.edu>
+- 7.0.47
+
 * Mon Jul 1 2013 Nathan Milford <nathan@milford.io>
 - 7.0.41
+

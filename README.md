@@ -1,20 +1,19 @@
-rpm-tomcat7
-===========
+skinny-tomcat-rpm
+=================
 
-An RPM spec file to install Tomcat 7.0.
+An RPM spec file to create a "skinny" Tomcat 8 RPM.
+
+* It removes all webapps contents and keeps only an empty ROOT.
+* It depends on Oracle JRE 7+.
 
 To Build:
 
 `sudo yum -y install rpmdevtools && rpmdev-setuptree`
 
-`wget https://raw.github.com/nmilford/rpm-tomcat7/master/tomcat7.spec -O ~/rpmbuild/SPECS/tomcat7.spec`
+`git clone https://github.com/xflin/skinny-tomcat-rpm.git`
 
-`wget https://raw.github.com/nmilford/rpm-tomcat7/master/tomcat7.init -O ~/rpmbuild/SOURCES/tomcat7.init`
+`cd ~/skinny-tomcat-rpm/SOURCES && wget http://www.motorlogy.com/apache/tomcat/tomcat-8/v8.0.5/bin/apache-tomcat-8.0.5.tar.gz`
 
-`wget https://raw.github.com/nmilford/rpm-tomcat7/master/tomcat7.sysconfig -O ~/rpmbuild/SOURCES/tomcat7.sysconfig`
+`ln -s ./skinny-tomcat-rpm ~/rpmbuild`
 
-`wget https://raw.github.com/nmilford/rpm-tomcat7/master/tomcat7.logrotate -O ~/rpmbuild/SOURCES/tomcat7.logrotate`
-
-`wget http://www.motorlogy.com/apache/tomcat/tomcat-7/v7.0.41/bin/apache-tomcat-7.0.41.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-7.0.41.tar.gz`
-
-`rpmbuild -bb ~/rpmbuild/SPECS/tomcat7.spec`
+`rpmbuild -bb ~/rpmbuild/SPECS/tomcat.spec`

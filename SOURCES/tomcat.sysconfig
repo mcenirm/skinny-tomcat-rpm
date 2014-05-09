@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Tomcat Configuration file
+
+# JAVA_HOME
+export JAVA_HOME="/usr/java/latest"
+
+# CATALINA_HOME
+#
+# This is the installation directory of tomcat.
+# Default is /opt/tomcat.
+#CATALINA_HOME="/opt/tomcat"
+
+# RUNAS_USER
+#
+# The un-privileged user that runs tomcat.
+# Default is tomcat
+#RUNAS_USER="tomcat"
+
+# WAITFOR
+#
+# How long (in seconds) to let tomcat try to exit normally. After that
+# period it'll be killed
+# Default is 30 seconds
+#WAITFOR=30
+
+# SECURITY
+#
+# Any value here will cause tomcat to run with a security manager.
+# comment to disable / uncomment to enable
+#SECURITY="on"
+
+# JAVA_OPTS
+#
+# This variable is used by tomcat as additional parameters to java.
+# It could be defined either here or in "$CATALINA_HOME/bin/setenv.sh"
+#export JAVA_OPTS=
