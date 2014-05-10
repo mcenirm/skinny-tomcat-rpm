@@ -3,8 +3,8 @@
 # sudo yum -y install rpmdevtools && rpmdev-setuptree
 #
 # git clone https://github.com/xflin/skinny-tomcat-rpm.git
-# cd ~/skinny-tomcat-rpm/SOURCES && wget http://www.motorlogy.com/apache/tomcat/tomcat-8/v8.0.5/bin/apache-tomcat-8.0.5.tar.gz
 # ln -s ~/rpmbuild ./skinny-tomcat-rpm
+# cd ~/rpmbuild/SOURCES && wget http://www.motorlogy.com/apache/tomcat/tomcat-8/v8.0.5/bin/apache-tomcat-8.0.5.tar.gz
 # rpmbuild -bb ~/rpmbuild/SPECS/tomcat.spec
 
 %define __jar_repack %{nil}
