@@ -28,18 +28,12 @@ Requires:   jre >= 1.7
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
-Tomcat is the servlet container that is used in the official Reference
-Implementation for the Java Servlet and JavaServer Pages technologies.
-The Java Servlet and JavaServer Pages specifications are developed by
-Oracle under the Java Community Process.
+Apache Tomcat is an open source software implementation of the Java Servlet
+and JavaServer Pages technologies. The Java Servlet and JavaServer Pages
+specifications are developed under the Java Community Process.
 
-Tomcat is developed in an open and participatory environment and
-released under the Apache Software License. Tomcat is intended to be
-a collaboration of the best-of-breed developers from around the world.
-We invite you to participate in this open development project. To
-learn more about getting involved, click here.
-
-This package contains the base tomcat installation that depends on Oracle's Java or openjdk JPP packages.
+This package contains the stripped down base tomcat installation that depends
+on Oracle's JRE.
 
 %prep
 %setup -q -n apache-tomcat-%{version}
@@ -56,6 +50,15 @@ rm -rf %{buildroot}/%{tomcat_home}/webapps/docs
 rm -rf %{buildroot}/%{tomcat_home}/webapps/examples
 rm -rf %{buildroot}/%{tomcat_home}/webapps/host-manager
 rm -rf %{buildroot}/%{tomcat_home}/webapps/manager
+
+# Remove extra logging configs
+sed -i -e '/^3manager/d' -e '/\[\/manager\]/d' \
+    -e '/^4host-manager/d' -e '/\[\/host-manager\]/d' \
+    -e '/^java.util.logging.ConsoleHandler/d' \
+    -e 's/, *java.util.logging.ConsoleHandler//' \
+    -e 's/, *4host-manager.org.apache.juli.AsyncFileHandler//' \
+    -e 's/, *3manager.org.apache.juli.AsyncFileHandler//' \
+    %{buildroot}/%{tomcat_home}/conf/logging.properties
 
 # Put logging in /var/log and link back.
 rm -rf %{buildroot}/%{tomcat_home}/logs
