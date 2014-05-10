@@ -3,7 +3,9 @@ skinny-tomcat-rpm
 
 An RPM spec file to create a "skinny" Tomcat 8 RPM.
 
-* It removes all webapps contents and keeps only an empty ROOT.
+* It removes all webapps: docs, examples, manager, host-manager.
+* It removes ROOT webapp contents and keeps only an empty ROOT directory.
+* It removes logging configurations for console, manager, and host-manager.
 * It depends on Oracle JRE 7+.
 
 To Build:
