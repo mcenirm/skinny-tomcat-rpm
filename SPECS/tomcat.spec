@@ -95,7 +95,7 @@ getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd --comment "Tomcat D
 
 %files
 %defattr(-,%{tomcat_user},%{tomcat_group})
-%{tomcat_home}/*
+%{tomcat_home}
 /var/log/%{name}/
 %defattr(-,root,root)
 %{_initrddir}/%{name}

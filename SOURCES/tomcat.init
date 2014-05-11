@@ -2,7 +2,15 @@
 # Tomcat init script.
 #
 # chkconfig:  - 80 20
-# description:  Start/stop script for Tomcat
+#
+### BEGIN INIT INFO
+# Provides: tomcat
+# Required-Start: $network $syslog
+# Required-Stop: $network $syslog
+# Default-Start:
+# Default-Stop:
+# Description: Start/stop script for Tomcat
+### END INIT INFO
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -20,6 +28,7 @@ RUNAS_USER=${RUNAS_USER:="tomcat"}
 WAITFOR=${WAITFOR:=3}
 CATALINA_PID="/var/run/${prog}.pid"
 RUN_SCRIPT="${CATALINA_HOME}/bin/catalina.sh"
+TOMCAT_LOG="${TOMCAT_LOG:-${CATALINA_HOME}/logs/catalina.out}"
 
 CDIR=$(pwd)
 
@@ -63,11 +72,12 @@ start() {
   touch ${CATALINA_PID}
   chown ${RUNAS_USER}:${RUNAS_USER} ${CATALINA_PID}
   cd ${CATALINA_HOME}
-  runuser -s /bin/bash ${RUNAS_USER} -c "${RUN_SCRIPT} start >>${CATALINA_HOME}/logs/catalina.out 2>&1"
+  runuser -s /bin/bash ${RUNAS_USER} -c "${RUN_SCRIPT} start >>${TOMCAT_LOG} 2>&1"
   RETVAL=$?
   cd ${CDIR}
   if [ $RETVAL -eq 0 ]; then
     echoSuccess
+    # postStart
   else
     echoFailure
   fi
@@ -100,7 +110,7 @@ stop() {
   echo -n "Stopping $prog."
 
   if status >/dev/null; then
-    runuser -s /bin/bash ${RUNAS_USER} -c "${RUN_SCRIPT} stop >>${CATALINA_HOME}/logs/catalina.out 2>&1"
+    runuser -s /bin/bash ${RUNAS_USER} -c "${RUN_SCRIPT} stop >>${TOMCAT_LOG} 2>&1"
 
     COUNT=0
     while [ $COUNT -lt ${WAITFOR} ]; do
