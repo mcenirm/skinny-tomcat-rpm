@@ -8,15 +8,16 @@
 # rpmbuild -bb ~/rpmbuild/SPECS/tomcat.spec
 
 %define __jar_repack %{nil}
-%define tomcat_home /opt/tomcat
+%define tomcat_home /usr/lib/tomcat
 %define tomcat_group tomcat
 %define tomcat_user tomcat
+%define tomcat_user_home /var/lib/tomcat
 
 Summary:    Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies.
 Name:       tomcat
 Version:    8.0.5
 BuildArch:  noarch
-Release:    1
+Release:    2
 License:    Apache Software License
 Group:      Networking/Daemons
 URL:        http://tomcat.apache.org/
@@ -25,6 +26,7 @@ Source1:    %{name}.init
 Source2:    %{name}.sysconfig
 Source3:    %{name}.logrotate
 Requires:   jre >= 1.7
+Conflicts:  tomcat <= 7.0, tomcat7
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
@@ -44,12 +46,12 @@ on Oracle's JRE.
 install -d -m 755 %{buildroot}/%{tomcat_home}/
 cp -R * %{buildroot}/%{tomcat_home}/
 
-# Remove all webapps
-rm -rf %{buildroot}/%{tomcat_home}/webapps/ROOT/*
-rm -rf %{buildroot}/%{tomcat_home}/webapps/docs
-rm -rf %{buildroot}/%{tomcat_home}/webapps/examples
-rm -rf %{buildroot}/%{tomcat_home}/webapps/host-manager
-rm -rf %{buildroot}/%{tomcat_home}/webapps/manager
+# Remove all webapps. Put webapps in /var/lib and link back.
+rm -rf %{buildroot}/%{tomcat_home}/webapps
+install -d -m 755 %{buildroot}%{tomcat_user_home}/webapps
+cd %{buildroot}/%{tomcat_home}/
+ln -s %{tomcat_user_home}/webapps webapps
+cd -
 
 # Remove extra logging configs
 sed -i -e '/^3manager/d' -e '/\[\/manager\]/d' \
@@ -74,6 +76,14 @@ cd %{buildroot}/%{tomcat_home}/
 ln -s %{_sysconfdir}/%{name} conf
 cd -
 
+# Put temp and work to /var/lib and link back.
+mv %{buildroot}/%{tomcat_home}/temp %{buildroot}/%{tomcat_user_home}/
+mv %{buildroot}/%{tomcat_home}/work %{buildroot}/%{tomcat_user_home}/
+cd %{buildroot}/%{tomcat_home}/
+ln -s %{tomcat_user_home}/temp
+ln -s %{tomcat_user_home}/work
+cd -
+
 # Drop init script
 install -d -m 755 %{buildroot}/%{_initrddir}
 install    -m 755 %_sourcedir/%{name}.init %{buildroot}/%{_initrddir}/%{name}
@@ -91,13 +101,15 @@ rm -rf %{buildroot}
 
 %pre
 getent group %{tomcat_group} >/dev/null || groupadd -r %{tomcat_group}
-getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd --comment "Tomcat Daemon User" --shell /bin/bash -M -r -g %{tomcat_group} --home %{tomcat_home} %{tomcat_user}
+getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd --comment "Tomcat Daemon User" --shell /bin/bash -M -r -g %{tomcat_group} --home %{tomcat_user_home} %{tomcat_user}
+[ "$(getent passwd tomcat | cut -d: -f6)" = %{tomcat_user_home} ] || /usr/sbin/usermod -d %{tomcat_user_home} %{tomcat_user}
 
 %files
 %defattr(-,%{tomcat_user},%{tomcat_group})
-%{tomcat_home}
+%{tomcat_user_home}
 /var/log/%{name}/
 %defattr(-,root,root)
+%{tomcat_home}
 %{_initrddir}/%{name}
 %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
@@ -118,7 +130,7 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
-* Mon Apr 28 2014 Xiaofeng Lin <xflin>
+* Fri May 16 2014 Xiaofeng Lin <xflin>
 * Thu Apr 10 2014 Brian Dwyer <bdwyertech>
 * Sat Feb 15 2014 Michael McGraw-Herdeg <mherdeg@mit.edu>
 - 7.0.50
