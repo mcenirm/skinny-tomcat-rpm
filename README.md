@@ -10,7 +10,13 @@ Tomcat RPM meant to be used in so-called "production" deployments.
 * It moves installation base (from /opt/tomcat) to /usr/lib/tomcat.
 * It places webapps, temp, and work under /var/lib/tomcat (with links from /usr/lib/tomcat).
 
-To Build:
+Prebuild RPM
+------------
+
+[tomcat-8.0.5-2.noarch.rpm](tomcat-8.0.5-2.noarch.rpm)
+
+To Build
+--------
 
 `sudo yum -y install rpmdevtools && rpmdev-setuptree`
 
