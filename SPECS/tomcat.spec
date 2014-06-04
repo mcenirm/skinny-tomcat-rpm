@@ -17,7 +17,7 @@ Summary:    Apache Tomcat is an open source software implementation of the Java 
 Name:       tomcat
 Version:    8.0.5
 BuildArch:  noarch
-Release:    2
+Release:    3
 License:    Apache Software License
 Group:      Networking/Daemons
 URL:        http://tomcat.apache.org/
@@ -52,6 +52,9 @@ install -d -m 755 %{buildroot}%{tomcat_user_home}/webapps
 cd %{buildroot}/%{tomcat_home}/
 ln -s %{tomcat_user_home}/webapps webapps
 cd -
+
+# Remove *.bat
+rm -f %{buildroot}/%{tomcat_home}/bin/*.bat
 
 # Remove extra logging configs
 sed -i -e '/^3manager/d' -e '/\[\/manager\]/d' \
