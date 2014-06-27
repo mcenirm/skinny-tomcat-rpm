@@ -13,7 +13,7 @@ Tomcat RPM meant to be used in so-called "production" deployments.
 Prebuild RPM
 ------------
 
-[tomcat-8.0.5-2.noarch.rpm](tomcat-8.0.5-2.noarch.rpm)
+[tomcat-8.0.9-1.noarch.rpm](tomcat-8.0.9-1.noarch.rpm)
 
 To Build
 --------
@@ -24,6 +24,6 @@ To Build
 
 `ln -s ./skinny-tomcat-rpm ~/rpmbuild`
 
-`cd ~/rpmbuild/SOURCES && wget http://www.motorlogy.com/apache/tomcat/tomcat-8/v8.0.5/bin/apache-tomcat-8.0.5.tar.gz`
+`cd ~/rpmbuild/SOURCES && wget http://www.motorlogy.com/apache/tomcat/tomcat-8/v8.0.9/bin/apache-tomcat-8.0.9.tar.gz`
 
 `rpmbuild -bb ~/rpmbuild/SPECS/tomcat.spec`
